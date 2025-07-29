@@ -8,7 +8,7 @@ This repository contains documentation and sources to build your own linux kerne
 
 ### Whats included?
 
-* everything to run  a mainline kernel and debian
+* everything to run a mainline kernel and debian
   * device tree source ./dts/armada-375-wdmc-gen2.dts
   * kernel config for various kernels (check ./config/)
   * some tweaks and pointers in txt files ./docs/
