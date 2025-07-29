@@ -1,4 +1,5 @@
 #!/bin/sh
+
 getenforce && SELINUX=':z'
 which podman && alias docker=podman
 
