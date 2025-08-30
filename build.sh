@@ -162,6 +162,7 @@ fi
 if [[ $BUILD_ROOTFS == "on" ]]; then
     if [ -z "$release" ]; then
         display_select "Rootfs creation" "Please select the Debian release to build." \
+            "trixie" "Debian Trixie" \
             "bookworm" "Debian Bookworm" \
             "bullseye" "Debian Bullseye" \
             "buster" "Debian Buster"
