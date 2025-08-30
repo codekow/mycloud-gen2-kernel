@@ -34,8 +34,11 @@ cp -a /dev/{null,console,tty} ${INITRAMFS_ROOT}/dev
 cp -a /bin/busybox ${INITRAMFS_ROOT}/bin/busybox
 cp $(ldd "/bin/busybox" | egrep -o '/.* ') ${INITRAMFS_ROOT}/lib/
 
-cp -a /sbin/e2fsck ${INITRAMFS_ROOT}/sbin/e2fsck
-cp $(ldd "/sbin/e2fsck" | egrep -o '/.* ') ${INITRAMFS_ROOT}/lib/
+E2FSCK_PATH=$(which e2fsck)
+E2FSCK_PATH=$(which e2fsck.static)
+
+cp -a "${E2FSCK_PATH}" ${INITRAMFS_ROOT}/sbin/e2fsck
+cp $(ldd "${E2FSCK_PATH}" | egrep -o '/.* ') ${INITRAMFS_ROOT}/lib/
 
 cat << EOF > ${INITRAMFS_ROOT}/init
 #!/bin/busybox sh
@@ -44,21 +47,21 @@ cat << EOF > ${INITRAMFS_ROOT}/init
 rescue_shell() {
 	printf '\e[1;31m' # bold red foreground
 	printf "\$1 Dropping you to a shell."
-	printf "\e[00m\n" # normal colour foreground
+	printf "\e[00m\n" # normal color foreground
 	#exec setsid cttyhack /bin/busybox sh
 	exec /bin/busybox sh
 }
 
 ask_for_stop() {
-        key='boot'
-        read -r -p "### Press any key to stop and run shell... (2)" -n1 -t5 key
-        if [ \$key != 'boot' ]; then
-                rescue_shell
-        fi
+	key='boot'
+	read -r -p "### Press any key to stop and run shell... (2)" -n1 -t5 key
+	if [ \$key != 'boot' ]; then
+			rescue_shell
+	fi
 }
 
 
-# initialise
+# initialize
 mount -t devtmpfs none /dev || rescue_shell "mount /dev failed."
 mount -t proc none /proc || rescue_shell "mount /proc failed."
 mount -t sysfs none /sys || rescue_shell "mount /sys failed."
@@ -104,7 +107,6 @@ if [ ! -x /newroot/\${init} ] && [ ! -h /newroot/\${init} ] && [ -b /dev/sda1 ];
 		umount /dev/sda1
 	fi
 fi
-
 
 # try 3rd partition on hdd
 if [ ! -x /newroot/\${init} ] && [ ! -h /newroot/\${init} ] && [ -b /dev/sda1 ] && [ -b /dev/sda3 ]; then
@@ -167,4 +169,3 @@ else
 fi
 
 echo '### Done.'
-
