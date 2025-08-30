@@ -14,7 +14,7 @@ This repository contains documentation and sources to build your own linux kerne
   * some tweaks and pointers in txt files ./docs/
   * toolchain for building old kernels is included as txz ./toolchain/ . I suggest using the gcc-arm-none-eabi toolchain via apt!
   * a build script to build the kernel, ramdisk and debootstrap a debian system
-  * some fixes/customisation for the device
+  * some fixes/customization for the device
   * a script to update the ramdisk in place
 
 ### How to use?
@@ -95,7 +95,7 @@ To use the prebuilt releases on your wdmc you'll have to decide wether to use a 
 * boot wdmc, root password is '1234' configure/add packages as needed
 * adjust time and date, use `hwclock --systohc` to update RTC
 * configure/add packages as needed
-* I suggest starting with USB stick, because this requires no changes on the internal harddisk.
+* I suggest starting with USB stick, because this requires no changes on the internal hard disk.
 
 If you need custom initramfs or different kernel settings, check the code and build necessary files yourself.
 
