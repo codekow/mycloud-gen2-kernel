@@ -34,8 +34,7 @@ cp -a /dev/{null,console,tty} ${INITRAMFS_ROOT}/dev
 cp -a /bin/busybox ${INITRAMFS_ROOT}/bin/busybox
 cp $(ldd "/bin/busybox" | egrep -o '/.* ') ${INITRAMFS_ROOT}/lib/
 
-E2FSCK_PATH=$(which e2fsck)
-E2FSCK_PATH=$(which e2fsck.static)
+E2FSCK_PATH=$(which e2fsck) || E2FSCK_PATH=$(which e2fsck.static)
 
 cp -a "${E2FSCK_PATH}" ${INITRAMFS_ROOT}/sbin/e2fsck
 cp $(ldd "${E2FSCK_PATH}" | egrep -o '/.* ') ${INITRAMFS_ROOT}/lib/
