@@ -10,7 +10,7 @@ unalias -a
 # destination
 CURRENT_DIR=$PWD
 INITRAMFS=${CURRENT_DIR}/initramfs
-INITRAMFS_ROOT=${INITRAMFS}/root
+INITRAMFS_ROOT="${INITRAMFS}"/root
 
 if [ "$1" = '--update' ]
 then
@@ -22,24 +22,24 @@ fi
 echo '### Removing old stuff'
 
 # remove old cruft
-rm -rf ${INITRAMFS}/
+rm -rf "${INITRAMFS:?}"/
 
-mkdir -p ${INITRAMFS}
-mkdir -p ${INITRAMFS_ROOT}
+mkdir -p "${INITRAMFS}"
+mkdir -p "${INITRAMFS_ROOT}"
 
 echo '### Creating initramfs root'
 
-mkdir -p ${INITRAMFS_ROOT}/{bin,dev,etc,lib,lib64,newroot,proc,sbin,sys,usr} ${INITRAMFS_ROOT}/usr/{bin,sbin}
-cp -a /dev/{null,console,tty} ${INITRAMFS_ROOT}/dev
-cp -a /bin/busybox ${INITRAMFS_ROOT}/bin/busybox
-cp $(ldd "/bin/busybox" | egrep -o '/.* ') ${INITRAMFS_ROOT}/lib/
+mkdir -p "${INITRAMFS_ROOT}"/{bin,dev,etc,lib,lib64,newroot,proc,sbin,sys,usr} "${INITRAMFS_ROOT}"/usr/{bin,sbin}
+cp -a /dev/{null,console,tty} "${INITRAMFS_ROOT}"/dev
+cp -a /bin/busybox "${INITRAMFS_ROOT}"/bin/busybox
+cp $(ldd "/bin/busybox" | grep -o -E '/.* ') "${INITRAMFS_ROOT}"/lib/
 
 E2FSCK_PATH=$(which e2fsck) || E2FSCK_PATH=$(which e2fsck.static)
 
-cp -a "${E2FSCK_PATH}" ${INITRAMFS_ROOT}/sbin/e2fsck
-cp $(ldd "${E2FSCK_PATH}" | egrep -o '/.* ') ${INITRAMFS_ROOT}/lib/
+cp -a "${E2FSCK_PATH}" "${INITRAMFS_ROOT}"/sbin/e2fsck
+cp $(ldd "${E2FSCK_PATH}" | grep -o -E '/.* ') "${INITRAMFS_ROOT}"/lib/
 
-cat << EOF > ${INITRAMFS_ROOT}/init
+cat << EOF > "${INITRAMFS_ROOT}"/init
 #!/bin/busybox sh
 /bin/busybox --install
 
@@ -55,7 +55,7 @@ ask_for_stop() {
 	key='boot'
 	read -r -p "### Press any key to stop and run shell... (2)" -n1 -t5 key
 	if [ \$key != 'boot' ]; then
-			rescue_shell
+		rescue_shell
 	fi
 }
 
@@ -102,7 +102,7 @@ fi
 # try 1st partition on hdd
 if [ ! -x /newroot/\${init} ] && [ ! -h /newroot/\${init} ] && [ -b /dev/sda1 ]; then
 	mount -t \${rootfstype} -o \${ro},\${rootflags} /dev/sda1 /newroot
-	if [ ! -x /newroot/\${init} ] && [ ! -h /newroot/\${init} ]; then	
+	if [ ! -x /newroot/\${init} ] && [ ! -h /newroot/\${init} ]; then
 		umount /dev/sda1
 	fi
 fi
@@ -132,39 +132,39 @@ exec switch_root /newroot \${init} || rescue_shell
 
 rescue_shell "end reached"
 EOF
-chmod +x ${INITRAMFS_ROOT}/init
+chmod +x "${INITRAMFS_ROOT}"/init
 
 echo '### Creating uRamdisk'
 
-cd ${INITRAMFS_ROOT}
-find . -print | cpio -ov --format=newc | gzip -9 > ${INITRAMFS}/custom-initramfs.cpio.gz
-mkimage -A arm -O linux -T ramdisk -a 0x00e00000 -e 0x0 -n "Custom initramfs" -d ${INITRAMFS}/custom-initramfs.cpio.gz ${INITRAMFS}/uRamdisk
+cd "${INITRAMFS_ROOT}" || return
+find . -print | cpio -ov --format=newc | gzip -9 > "${INITRAMFS}"/custom-initramfs.cpio.gz
+mkimage -A arm -O linux -T ramdisk -a 0x00e00000 -e 0x0 -n "Custom initramfs" -d "${INITRAMFS}"/custom-initramfs.cpio.gz "${INITRAMFS}"/uRamdisk
 
-if [ "$UPDATE_BOOT" = 'yes' ] 
-then 
+if [ "$UPDATE_BOOT" = 'yes' ]
+then
     if [ -e '/boot/boot/' ]; then
-        echo '### Updating /boot/boot'    
-    
+        echo '### Updating /boot/boot'
+
         if [ -e '/boot/boot/uRamdisk' ]; then
             mv /boot/boot/uRamdisk /boot/boot/uRamdisk.old
         fi
-    
-        mv ${INITRAMFS}/uRamdisk /boot/boot/uRamdisk        
+
+        mv "${INITRAMFS}"/uRamdisk /boot/boot/uRamdisk
     elif [ -e '/boot/' ]; then
         echo '### Updating /boot'
-    
+
         if [ -e '/boot/uRamdisk' ]; then
             mv /boot/uRamdisk /boot/uRamdisk.old
         fi
-    
-        mv ${INITRAMFS}/uRamdisk /boot/uRamdisk    
+
+        mv "${INITRAMFS}"/uRamdisk /boot/uRamdisk
     fi
 
-    rm -rf ${INITRAMFS}
+    rm -rf "${INITRAMFS}"
 else
     echo '### Cleanup'
-    rm -rf ${INITRAMFS}/custom-initramfs.cpio.gz
-    rm -rf ${INITRAMFS_ROOT}
+    rm -rf "${INITRAMFS}"/custom-initramfs.cpio.gz
+    rm -rf "${INITRAMFS_ROOT}"
 fi
 
 echo '### Done.'
