@@ -59,7 +59,7 @@ PATH=bin:sbin:usr/bin:usr/sbin
 /bin/busybox --install
 
 rescue_shell(){
-  wd_set_led red
+  wd_set_led blue
   rescue_telnet
 
   printf '\e[1;31m' # bold red foreground
@@ -72,16 +72,20 @@ rescue_shell(){
 rescue_telnet(){
   [ -x /usr/sbin/telnetd ] || return 1
 
+  init_mount
+  mount -t devpts none /dev/pts
+
   ip link set eth0 up
   ip addr add 10.210.0.10/24 dev eth0
   # udhcpc -n -q -i eth0  -x hostname:rescue-wd
 
   telnetd -l /bin/sh -b 0.0.0.0:6666
+  sleep 30
 }
 
 ask_for_stop(){
   key='boot'
-  read -r -p "### Press any key to stop and run shell... (2)" -n1 -t5 key
+  read -r -p "### Press any key in 5s to stop and run shell..." -n1 -t5 key
   if [ \$key != 'boot' ]; then
     rescue_shell
   fi
@@ -111,10 +115,9 @@ wd_set_led(){
 }
 
 init_mount(){
-  mount -t devtmpfs none /dev || rescue_shell "mount /dev failed."
-  mount -t proc none /proc || rescue_shell "mount /proc failed."
-  mount -t sysfs none /sys || rescue_shell "mount /sys failed."
-  mount -t devpts none /dev/pts || rescue_shell "mount /dev/pts failed."
+  mount -t devtmpfs none /dev
+  mount -t proc none /proc
+  mount -t sysfs none /sys
 }
 
 init_mount
@@ -123,8 +126,6 @@ sleep 5
 
 # set mac from nand
 wd_set_mac
-
-# rescue_telnet && sleep 30
 
 # get cmdline parameters
 init="/sbin/init"
@@ -163,12 +164,10 @@ wd_set_led green
 
 # clean up
 umount /dev/pts /dev /sys /proc
+killall telnetd
 
 # boot the new root
 exec switch_root /newroot \${init}
-
-# remount for rescue
-init_mount
 
 rescue_shell "end reached"
 EOF
