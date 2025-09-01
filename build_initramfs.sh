@@ -106,8 +106,8 @@ wd_set_mac(){
 wd_set_led(){
   led_color=\${1:-green}
   echo none > /sys/class/leds/system-blue/trigger
-  echo default-on > /sys/class/leds/system-\${led_color}/trigger
   echo ide-disk > /sys/class/leds/system-red/trigger
+  echo default-on > /sys/class/leds/system-\${led_color}/trigger
 }
 
 init_mount(){
@@ -166,6 +166,9 @@ umount /dev/pts /dev /sys /proc
 
 # boot the new root
 exec switch_root /newroot \${init}
+
+# remount for rescue
+init_mount
 
 rescue_shell "end reached"
 EOF
