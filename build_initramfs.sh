@@ -52,7 +52,7 @@ add_bin fdisk /sbin/fdisk
 
 cat << EOF > "${INITRAMFS_ROOT:?}"/init
 #!/bin/busybox sh
-set -x
+# set -x
 
 PATH=bin:sbin:usr/bin:usr/sbin
 
