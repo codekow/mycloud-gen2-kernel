@@ -76,7 +76,7 @@ rescue_telnet(){
   mount -t devpts none /dev/pts
 
   ip link set eth0 up
-  ip addr add 10.210.0.10/24 dev eth0
+  ip addr add 192.168.1.1/24 dev eth0
   # udhcpc -n -q -i eth0  -x hostname:rescue-wd
 
   telnetd -l /bin/sh -b 0.0.0.0:6666
