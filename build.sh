@@ -48,7 +48,7 @@ if [[ $GHRUNNER != 'on' ]]; then
     apt-get install ${PREREQ} 
 fi
 
-if which /usr/bin/arm-none-eabi-gcc; then
+if [[ ! -x /usr/bin/arm-none-eabi-gcc ]]; then
     apt-get install -y ${PREREQ}
 fi
 
