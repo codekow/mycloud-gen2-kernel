@@ -30,9 +30,19 @@ jobs:
         with: 
           clean: 'false'
 
+      - name: Build Container
+        uses: docker/build-push-action@v5
+        with:
+          tags: mycloud-builder
+          context: docker/
+          push: false
+
       # Runs a single command using the runners shell
       - name: run build script for kernel 6.12.y
-        run: ./build.sh --ghrunner --kernel --clean --kernelbranch linux-6.12.y
+        uses: addnab/docker-run-action@v3
+        with:
+          image: mycloud-builder
+          run: ./build.sh --ghrunner --kernel --clean --kernelbranch linux-6.12.y
 
       # Upload build results
       # - uses: actions/upload-artifact@v4
