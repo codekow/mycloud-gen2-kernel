@@ -1,4 +1,4 @@
-FROM docker.io/library/ubuntu:jammy as builder
+FROM docker.io/library/ubuntu:jammy AS builder
 
 ARG DEBIAN_FRONTEND=noninteractive
 
