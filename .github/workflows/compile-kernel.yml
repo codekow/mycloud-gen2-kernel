@@ -49,10 +49,10 @@ jobs:
         uses: addnab/docker-run-action@v3
         with:
           image: mycloud-builder
-          options: -v ${{ github.workspace }}:/work
+          options: -v ${pwd}:/build
           run: |
             ls -l /work
-            # /work/build.sh --ghrunner --kernel --clean --kernelbranch linux-6.12.y
+            ./build.sh --ghrunner --kernel --clean --kernelbranch linux-6.12.y
 
       # Upload build release
       - name: Release
