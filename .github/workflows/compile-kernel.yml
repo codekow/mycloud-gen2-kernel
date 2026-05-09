@@ -30,12 +30,19 @@ jobs:
         with: 
           clean: 'false'
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
       - name: Build Container
-        run: |
-          docker images
-          docker build \
-            -t mycloud-builder \
-            -f docker/Dockerfile
+        uses: docker/build-push-action@v7
+        with:
+          tags: mycloud-builder
+          context: docker/
+          push: false
+          load: true
+
+      - name: Debug
+        run: docker images
 
       # Runs a single command using the runners shell
       - name: run build script for kernel 6.12.y
