@@ -39,7 +39,7 @@ jobs:
           tags: mycloud-builder
           context: docker/
           push: false
-          driver: docker
+          load: true
 
       - name: Debug
         run: docker images
