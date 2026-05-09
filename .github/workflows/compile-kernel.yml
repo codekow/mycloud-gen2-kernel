@@ -40,6 +40,9 @@ jobs:
           context: docker/
           push: false
 
+      - name: Debug
+        run: docker images
+
       # Runs a single command using the runners shell
       - name: run build script for kernel 6.12.y
         uses: addnab/docker-run-action@v3
