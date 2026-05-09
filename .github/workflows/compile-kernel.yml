@@ -21,8 +21,7 @@ jobs:
   # This workflow contains a single job called "build"
   build-kernel:
     # The type of runner that the job will run on
-    runs-on: [ self-hosted, docker ]
-    container: docker.io/library/ubuntu:jammy 
+    runs-on: [ self-hosted ]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
