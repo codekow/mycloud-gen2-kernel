@@ -30,9 +30,27 @@ jobs:
         with: 
           clean: 'false'
 
-      # Runs a single command using the runners shell
+      # - name: Set up QEMU
+      #   uses: docker/setup-qemu-action@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+ 
+      - name: Create Builder
+        uses: docker/build-push-action@v7
+        with:
+          context: docker/
+          tags: mycloud-builder
+          load: true
+    
       - name: run build script for kernel 6.12.y
-        run: ./build.sh --ghrunner --kernel --clean --kernelbranch linux-6.12.y
+        uses: addnab/docker-run-action@v3
+        with:
+          image: mycloud-builder
+          options: --volumes-from ${{ env.JOB_CONTAINER_NAME }}
+          run: |
+            cd ${{ github.workspace }}
+            ./build.sh --ghrunner --kernel --clean --kernelbranch linux-6.12.y
 
       # Upload build release
       - name: Release
