@@ -30,19 +30,12 @@ jobs:
         with: 
           clean: 'false'
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
-
       - name: Build Container
-        uses: docker/build-push-action@v7
-        with:
-          tags: mycloud-builder
-          context: docker/
-          push: false
-          load: true
-
-      - name: Debug
-        run: docker images
+        run: |
+          docker images
+          docker build \
+            -t mycloud-builder \
+            -f docker/Dockerfile
 
       # Runs a single command using the runners shell
       - name: run build script for kernel 6.12.y
@@ -50,13 +43,9 @@ jobs:
         with:
           image: mycloud-builder
           options: -v ${{ github.workspace }}:/work
-          run: /work/build.sh --ghrunner --kernel --clean --kernelbranch linux-6.12.y
-
-      # Upload build results
-      # - uses: actions/upload-artifact@v4
-      #   with:
-      #     name: build-results
-      #     path: output/*.tar.gz
+          run: |
+            ls -l /work
+            # /work/build.sh --ghrunner --kernel --clean --kernelbranch linux-6.12.y
 
       # Upload build release
       - name: Release
