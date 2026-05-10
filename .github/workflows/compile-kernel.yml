@@ -40,13 +40,13 @@ jobs:
         uses: docker/build-push-action@v7
         with:
           context: docker/
-          tags: localhost/mycloud-builder
+          tags: mycloud-builder
           load: true
     
       - name: run build script for kernel 6.12.y
         uses: addnab/docker-run-action@v3
         with:
-          image: localhost/mycloud-builder
+          image: mycloud-builder
           options: --volumes-from ${{ env.JOB_CONTAINER_NAME }}
           run: |
             cd ${{ github.workspace }}
