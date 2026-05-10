@@ -14,4 +14,4 @@ docker run -it --rm \
   -v $(pwd):/build${SELINUX} \
   --privileged \
   --replace \
-  localhost/mycloud-builder
+  localhost/mycloud-builder /build/build.sh
